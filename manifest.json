@@ -1,0 +1,35 @@
+{
+    "manifest_version": 2,
+    "name": "Regex Search",
+    "version": "1.0",
+    "browser_action": {
+        "default_popup": "index.html"
+    },
+    "content_scripts": [{
+        "matches": [
+            "http://*/*",
+            "https://*/*",
+            "file://*/*"
+        ],
+        "js": [
+            "content-scripts.js"
+        ],
+        "css": [
+            "content-scripts.css"
+        ]
+    }],
+    "permissions": [
+        "activeTab",
+        "storage"
+    ],
+    "commands": {
+        "_execute_browser_action": {
+            "suggested_key": {
+                "linux": "Ctrl+Shift+F",
+                "mac": "Command+Shift+F",
+                "windows": "Ctrl+Shift+F",
+                "chromeos": "Ctrl+Shift+F"
+            }
+        }
+    }
+}

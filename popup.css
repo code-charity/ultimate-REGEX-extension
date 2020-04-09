@@ -1,0 +1,95 @@
+
+html
+{
+	--satus-theme--transparent: rgba(0, 0, 0, .1);
+	--satus-theme-surface: #242424;
+	--satus-theme-on-surface: #fafafa;
+}
+@font-face
+{
+    font-family: 'Open Sans';
+    font-weight: 400;
+
+    src: url('assets/fonts/OpenSans-Regular.ttf');
+}
+
+@font-face
+{
+    font-family: 'Open Sans';
+    font-weight: 600;
+
+    src: url('assets/fonts/OpenSans-SemiBold.ttf');
+}
+
+body
+{
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+
+    display: flex;
+    overflow: hidden;
+    flex-direction: column;
+
+    width: 400px;
+    height: 56px;
+    margin: 0;
+
+    background-color: #eee;
+}
+
+button
+{
+    font-family: 'Open Sans', sans-serif;
+}
+/*--------------------------------------------------------------
+>>> BUTTON
+--------------------------------------------------------------*/
+
+.satus-button
+{
+    box-sizing: unset;
+    width: 24px;
+    min-width: 24px;
+    height: 24px;
+    min-height: 24px;
+    padding: 8px;
+
+    border-radius: 50%;
+    background-color: transparent;
+}
+
+.satus-button:hover
+{
+    background-color: var(--satus-theme--transparent);
+}
+
+.satus-button::before
+{
+    content: unset;
+}
+
+.satus-button svg
+{
+    fill: transparent;
+    stroke: currentColor;
+    stroke-width: 1.75;
+}
+
+.satus-button:not(:first-child)
+{
+    margin: 0 0 0 8px;
+}
+
+/*--------------------------------------------------------------
+>>> SECTION
+--------------------------------------------------------------*/
+
+.satus-section
+{
+    padding: 0 8px;
+}
+
+.satus-text-field
+{
+    height: 100%;
+}

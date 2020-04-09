@@ -1,0 +1,10 @@
+regex-search-highlight
+{
+    color: #000;
+    background: #ff0;
+}
+
+regex-search-highlight.selected
+{
+    background-color: #f90;
+}

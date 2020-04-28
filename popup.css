@@ -1,10 +1,10 @@
-
+
 html
 {
 	--satus-theme--transparent: rgba(0, 0, 0, .1);
 	--satus-theme-surface: #242424;
 	--satus-theme-on-surface: #fafafa;
-}
+}
 @font-face
 {
     font-family: 'Open Sans';
@@ -40,7 +40,7 @@ body
 button
 {
     font-family: 'Open Sans', sans-serif;
-}
+}
 /*--------------------------------------------------------------
 >>> BUTTON
 --------------------------------------------------------------*/
@@ -79,7 +79,7 @@ button
 {
     margin: 0 0 0 8px;
 }
-
+
 /*--------------------------------------------------------------
 >>> SECTION
 --------------------------------------------------------------*/
@@ -88,7 +88,7 @@ button
 {
     padding: 0 8px;
 }
-
+
 .satus-text-field
 {
     height: 100%;

@@ -1,4 +1,4 @@
-
+
 var current_regex,
     selected_index = 0,
     search_threads = 0;

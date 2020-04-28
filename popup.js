@@ -1,4 +1,4 @@
-
+
 function send(name, value) {
     chrome.tabs.query({
         active: true,

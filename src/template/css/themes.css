@@ -1,6 +1,6 @@
 html
 {
-	--satus-theme--transparent: rgba(0, 0, 0, .1);
-	--satus-theme-surface: #242424;
-	--satus-theme-on-surface: #fafafa;
+	--satus-theme--transparent: rgba(0, 0, 0, .05);
+	--satus-theme-surface: #fff;
+	--satus-theme-on-surface: #777;
 }

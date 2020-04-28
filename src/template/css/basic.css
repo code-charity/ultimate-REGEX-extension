@@ -27,7 +27,8 @@ body
     height: 56px;
     margin: 0;
 
-    background-color: #eee;
+    color: var(--satus-theme-on-surface);
+    background-color: var(--satus-theme-surface);
 }
 
 button

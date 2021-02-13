@@ -78,10 +78,8 @@ window.addEventListener('keydown', function(event) {
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.name === 1) {
-        current_regex = new RegExp(request.value, 'g');
+        current_regex = new RegExp(request.value, 'gi');
         selected_index = 0;
-
-        console.log(request.value);
 
         clear();
         search(document.body, sendCount);

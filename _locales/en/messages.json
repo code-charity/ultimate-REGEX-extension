@@ -1,0 +1,14 @@
+{
+    "caseSensitive": {
+        "message": "Case sensitive"
+    },
+    "next": {
+        "message": "Next"
+    },
+    "previous": {
+        "message": "Previous"
+    },
+    "regularExpression": {
+        "message": "Regular expression"
+    }
+}

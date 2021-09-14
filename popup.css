@@ -1,97 +1,135 @@
-
-html
-{
-	--satus-theme--transparent: rgba(0, 0, 0, .05);
-	--satus-theme-surface: #fff;
-	--satus-theme-on-surface: #777;
-}
-@font-face
-{
-    font-family: 'Open Sans';
-    font-weight: 400;
-
-    src: url('assets/fonts/OpenSans-Regular.ttf');
-}
-
-@font-face
-{
-    font-family: 'Open Sans';
-    font-weight: 600;
-
-    src: url('assets/fonts/OpenSans-SemiBold.ttf');
-}
-
-body
-{
-    font-family: 'Open Sans', sans-serif;
-    font-size: 14px;
-
-    display: flex;
-    overflow: hidden;
-    flex-direction: column;
-
-    width: 400px;
-    height: 56px;
-    margin: 0;
-
-    color: var(--satus-theme-on-surface);
-    background-color: var(--satus-theme-surface);
-}
-
-button
-{
-    font-family: 'Open Sans', sans-serif;
-}
-
 /*--------------------------------------------------------------
->>> BUTTON
+>>> POPUP:
+----------------------------------------------------------------
+# Header
+	# Buttons
+	# Icons
 --------------------------------------------------------------*/
 
-.satus-button
-{
-    box-sizing: unset;
-    width: 24px;
-    min-width: 24px;
-    height: 24px;
-    min-height: 24px;
-    padding: 8px;
-
-    border-radius: 50%;
-    background-color: transparent;
+body {
+	--satus-header-background: #272735;
+	--satus-header-text: #7d7da1;
 }
 
-.satus-button:hover
-{
-    background-color: var(--satus-theme--transparent);
+
+/*--------------------------------------------------------------
+# HEADER
+--------------------------------------------------------------*/
+
+.satus-header {
+	padding: 8px;
+	height: 52px;
 }
 
-.satus-button::before
-{
-    content: unset;
+.satus-text-field {
+	flex: 1;
+	height: 36px;
 }
 
-.satus-button svg
-{
-    fill: transparent;
-    stroke: currentColor;
-    stroke-width: 1.75;
-}
 
-.satus-button:not(:first-child)
-{
+/*--------------------------------------------------------------
+# COUNTER
+--------------------------------------------------------------*/
+
+.satus-span--counter {
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    height: 100%;
+    pointer-events: none;
+    align-items: center;
+    justify-content: center;
     margin: 0 0 0 8px;
 }
 
+
 /*--------------------------------------------------------------
->>> SECTION
+# BUTTONS
 --------------------------------------------------------------*/
 
-.satus-section
-{
-    padding: 0 8px;
+.satus-header .satus-button {
+	font-family: inherit;
+	font-size: 16px;
+	font-weight: 700;
+	position: relative;
+	overflow: hidden;
+	width: 32px;
+	height: 32px;
+	margin: 0 0 0 8px;
+	padding: 2px;
+	transition: background-color 150ms;
+	color: inherit;
+	border: none;
+	border-radius: 50%;
+	outline: none;
+	background-color: transparent;
+	appearance: none;
 }
 
-.satus-text-field
-{
-    height: 100%;
+.satus-header .satus-button:not([disabled]):hover,
+.satus-header .satus-button:not([disabled]):focus {
+	background-color: rgba(255, 255, 255, .08);
+}
+
+.satus-header .satus-button[disabled] {
+	opacity: .32;
+	pointer-events: none;
+}
+
+.satus-header .satus-button[selected] {
+	color: #7a7aff;
+}
+
+.satus-header .satus-button--case-sensitive[selected] {
+    color: #ff7a7a;
+}
+
+
+/*--------------------------------------------------------------
+# ICONS
+--------------------------------------------------------------*/
+
+/*--------------------------------------------------------------
+# PREVIOUS
+--------------------------------------------------------------*/
+
+.satus-button--previous>span {
+	position: absolute;
+	top: 12px;
+	left: 11px;
+	width: 10px;
+	height: 2px;
+	transition: 120ms ease;
+	background: #7d7da1;
+}
+
+.satus-button--previous>span:nth-child(1) {
+	transform: rotate(-45deg) translateX(-4px);
+}
+
+.satus-button--previous>span:nth-child(2) {
+	transform: rotate(45deg) translateX(4px);
+}
+
+
+/*--------------------------------------------------------------
+# NEXT
+--------------------------------------------------------------*/
+
+.satus-button--next>span {
+	position: absolute;
+	top: 18px;
+	left: 11px;
+	width: 10px;
+	height: 2px;
+	transition: 120ms ease;
+	background: #7d7da1;
+}
+
+.satus-button--next>span:nth-child(1) {
+	transform: rotate(45deg) translateX(-4px);
+}
+
+.satus-button--next>span:nth-child(2) {
+	transform: rotate(-45deg) translateX(4px);
 }

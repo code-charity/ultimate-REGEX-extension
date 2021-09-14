@@ -1,37 +1,41 @@
 {
-    "manifest_version": 2,
-    "name": "Regex Search",
-    "version": "1.2",
-    "icons": {
-        "16": "assets/icons/16.png",
-        "32": "assets/icons/32.png",
-        "48": "assets/icons/48.png",
-        "128": "assets/icons/128.png"
-    },
-    "browser_action": {
-        "default_popup": "index.html"
-    },
-    "content_scripts": [{
-        "matches": [
-            "http://*/*",
-            "https://*/*",
-            "file://*/*"
-        ],
-        "js": [
-            "content-scripts.js"
-        ],
-        "css": [
-            "content-scripts.css"
-        ]
-    }],
-    "commands": {
-        "_execute_browser_action": {
-            "suggested_key": {
-                "linux": "Ctrl+Shift+F",
-                "mac": "Command+Shift+F",
-                "windows": "Ctrl+Shift+F",
-                "chromeos": "Ctrl+Shift+F"
-            }
-        }
-    }
+	"manifest_version": 2,
+	"name": "Regex",
+	"version": "1.5",
+	"default_locale": "en",
+	"icons": {
+		"16": "icons/16.png",
+		"32": "icons/32.png",
+		"48": "icons/48.png",
+		"128": "icons/128.png"
+	},
+	"background": {
+		"scripts": [
+			"background.js"
+		]
+	},
+	"browser_action": {
+		"default_popup": "popup.html"
+	},
+	"content_scripts": [{
+		"all_frames": false,
+		"js": [
+			"content-script.js"
+		],
+		"matches": [
+			"<all_urls>"
+		],
+		"run_at": "document_start"
+	}],
+	"permissions": [
+		"storage"
+	],
+	"commands": {
+		"_execute_browser_action": {
+			"suggested_key": {
+				"default": "Ctrl+Shift+F"
+			}
+		}
+	},
+	"offline_enabled": true
 }

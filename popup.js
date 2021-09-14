@@ -1,67 +1,274 @@
+/*--------------------------------------------------------------
+>>> POPUP:
+----------------------------------------------------------------
+# Global variables
+# Skeleton
+# Update counter
+# Initialization
+--------------------------------------------------------------*/
 
-function send(name, value) {
-    chrome.tabs.query({
-        active: true,
-        currentWindow: true
-    }, function(tabs) {
-        if (tabs[0]) {
-            chrome.tabs.sendMessage(tabs[0].id, {
-                name: name,
-                value: value
-            });
-        }
-    });
+/*--------------------------------------------------------------
+# GLOBAL VARIABLES
+--------------------------------------------------------------*/
+
+var tab = -1;
+
+
+/*--------------------------------------------------------------
+# SKELETON
+--------------------------------------------------------------*/
+
+var skeleton = {
+	component: 'base',
+
+	header: {
+		component: 'header',
+
+		text_field: {
+			component: 'text-field',
+			syntax: 'regex',
+			value: function () {
+				return satus.storage.get('last-query') || '';
+			},
+			on: {
+				change: function () {
+					satus.storage.set('last-query', this.value);
+
+					if (this.value.length > 0) {
+						chrome.tabs.sendMessage(tab, {
+							type: 'input',
+							value: this.value,
+							regexp: satus.storage.get('regular-expression') !== false,
+							case_sensitive: satus.storage.get('case-sensitive') === true
+						}, function (response) {
+							if (response) {
+								updateCounter(response.index, response.length);
+							}
+						});
+					} else {
+						chrome.tabs.sendMessage(tab, {
+							type: 'reset'
+						}, function (response) {
+							if (response) {
+								updateCounter(response.index, response.length);
+							}
+						});
+					}
+				}
+			},
+
+			counter: {
+				component: 'span',
+				class: 'satus-span--counter'
+			}
+		},
+		previous: {
+			component: 'button',
+			class: 'satus-button--previous',
+			attr: {
+				disabled: 'true',
+				title: 'previous'
+			},
+			pluviam: true,
+			on: {
+				click: function () {
+					chrome.tabs.sendMessage(tab, {
+						type: 'previous'
+					}, function (response) {
+						if (response) {
+							updateCounter(response.index, response.length);
+						}
+					});
+				}
+			},
+
+			line_1: {
+				component: 'span'
+			},
+			line_2: {
+				component: 'span'
+			}
+		},
+		next: {
+			component: 'button',
+			class: 'satus-button--next',
+			attr: {
+				disabled: 'true',
+				title: 'next'
+			},
+			pluviam: true,
+			on: {
+				click: function () {
+					chrome.tabs.sendMessage(tab, {
+						type: 'next'
+					}, function (response) {
+						if (response) {
+							updateCounter(response.index, response.length);
+						}
+					});
+				}
+			},
+
+			line_1: {
+				component: 'span'
+			},
+			line_2: {
+				component: 'span'
+			}
+		},
+		regexp: {
+			component: 'button',
+			class: 'satus-button--regexp',
+			attr: {
+				title: 'regularExpression',
+				selected: true
+			},
+			text: '.*',
+			pluviam: true,
+			on: {
+				click: function () {
+					var option = this.toggleAttribute('selected'),
+						text_field = skeleton.header.text_field.rendered;
+
+					if (option) {
+						skeleton.header.text_field.rendered.syntax = 'regex';
+					} else {
+						skeleton.header.text_field.rendered.syntax = false;
+					}
+
+					if (text_field.value.length > 0) {
+						chrome.tabs.sendMessage(tab, {
+							type: 'input',
+							value: text_field.value,
+							regexp: option,
+							case_sensitive: satus.storage.get('case-sensitive') === true
+						}, function (response) {
+							if (response) {
+								updateCounter(response.index, response.length);
+							}
+						});
+					}
+
+					satus.storage.set('regular-expression', option);
+				}
+			}
+		},
+		case_sensitive: {
+			component: 'button',
+			class: 'satus-button--case-sensitive',
+			attr: {
+				title: 'caseSensitive'
+			},
+			text: 'Aa',
+			pluviam: true,
+			on: {
+				click: function () {
+					var option = this.toggleAttribute('selected'),
+						text_field = skeleton.header.text_field.rendered;
+
+					if (text_field.value.length > 0) {
+						chrome.tabs.sendMessage(tab, {
+							type: 'input',
+							value: text_field.value,
+							regexp: satus.storage.get('regular-expression') !== false,
+							case_sensitive: option
+						}, function (response) {
+							if (response) {
+								updateCounter(response.index, response.length);
+							}
+						});
+					}
+
+					satus.storage.set('case-sensitive', option);
+				}
+			}
+		}
+	}
+};
+
+
+/*--------------------------------------------------------------
+# UPDATE COUNTER
+--------------------------------------------------------------*/
+
+function updateCounter(index, count) {
+	if (count > 0) {
+		skeleton.header.text_field.counter.rendered.textContent = index + ' of ' + count;
+		skeleton.header.previous.rendered.disabled = false;
+		skeleton.header.next.rendered.disabled = false;
+	} else {
+		skeleton.header.text_field.counter.rendered.textContent = '';
+		skeleton.header.previous.rendered.disabled = true;
+		skeleton.header.next.rendered.disabled = true;
+	}
 }
 
-Satus.render({
-    section: {
-        type: 'section',
 
-        text_field: {
-            type: 'text-field',
-            onrender: function() {
-                var self = this;
+/*--------------------------------------------------------------
+# INITIALIZATION
+--------------------------------------------------------------*/
 
-                setTimeout(function() {
-                    self.focus();
-                });
-            },
-            onkeypress: function(event) {
-                var self = this;
+satus.storage.import(function (items) {
+	satus.fetch('_locales/' + (items.language || 'en') + '/messages.json', function (object) {
+		var background = chrome.runtime.connect({
+			name: 'popup'
+		});
 
-                setTimeout(function() {
-                    if (event.keyCode === 13) {
-                        send(3);
-                    } else {
-                        send(1, self.value);
-                    }
-                });
-            }
-        },
-        index: {
-            type: 'text',
-            class: 'satus-text--count',
-            innerText: '0/0'
-        },
-        button_previous: {
-            type: 'button',
-            before: '<svg viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"></svg>',
-            onclick: function() {
-                send(2);
-            }
-        },
-        button_next: {
-            type: 'button',
-            before: '<svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"></svg>',
-            onclick: function() {
-                send(3);
-            }
+        for (var key in object) {
+            satus.locale.strings[key] = object[key].message;
         }
-    }
-});
 
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    if (request.name === 4) {
-        document.querySelector('.satus-text--count').innerText = request.value;
-    }
+        if (items['regular-expression'] === false) {
+        	skeleton.header.text_field.syntax = false;
+        	delete skeleton.header.regexp.attr.selected;
+        }
+
+        if (items['case-sensitive'] === true) {
+        	skeleton.header.case_sensitive.attr.selected = true;
+        }
+
+		satus.render(skeleton);
+
+		background.onMessage.addListener(function (message) {
+			if (message && message.value === true) {
+				chrome.tabs.sendMessage(tab, {
+					type: 'init'
+				}, function (response) {
+					var text_field = skeleton.header.text_field.rendered;
+
+					if (response && response.length > 0) {
+						text_field.value = response;
+
+						satus.storage.set('last-query', response);
+					}
+
+					if (text_field.value.length > 0) {
+						chrome.tabs.sendMessage(tab, {
+							type: 'input',
+							value: text_field.value,
+							regexp: satus.storage.get('regular-expression') !== false,
+							case_sensitive: satus.storage.get('case-sensitive') === true
+						}, function (response) {
+							if (response) {
+								console.log(response);
+								updateCounter(response.index, response.length);
+							}
+						});
+					}
+				});
+			}
+		});
+
+		chrome.tabs.query({
+			currentWindow: true,
+			active: true
+		}, function (tabs) {
+			tab = tabs[0].id;
+
+			background.postMessage({
+				type: 'tab',
+				id: tab
+			});
+		});
+	});
 });

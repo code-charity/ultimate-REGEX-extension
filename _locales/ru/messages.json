@@ -1,0 +1,14 @@
+{
+    "caseSensitive": {
+        "message": "Чувствительность к регистру"
+    },
+    "next": {
+        "message": "Следующий"
+    },
+    "previous": {
+        "message": "Предыдущий"
+    },
+    "regularExpression": {
+        "message": "Регулярное выражение"
+    }
+}

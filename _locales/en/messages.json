@@ -1,6 +1,21 @@
 {
+    "add": {
+        "message": "Add"
+    },
+    "backgroundColor": {
+        "message": "Background color"
+    },
     "caseSensitive": {
         "message": "Case sensitive"
+    },
+    "close": {
+        "message": "Close"
+    },
+    "highlight": {
+        "message": "Highlight"
+    },
+    "more": {
+        "message": "More"
     },
     "next": {
         "message": "Next"
@@ -10,5 +25,14 @@
     },
     "regularExpression": {
         "message": "Regular expression"
+    },
+    "remove": {
+        "message": "Remove"
+    },
+    "searchAndReplace": {
+        "message": "Search & replace"
+    },
+    "textColor": {
+        "message": "Text color"
     }
 }

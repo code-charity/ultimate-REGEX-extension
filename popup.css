@@ -1,15 +1,55 @@
 /*--------------------------------------------------------------
 >>> POPUP:
 ----------------------------------------------------------------
+# Body
+# Base
 # Header
 	# Buttons
 	# Icons
+# Main
+# Aside
+	# Buttons
+--------------------------------------------------------------*/
+
+/*--------------------------------------------------------------
+# BODY
 --------------------------------------------------------------*/
 
 body {
 	--satus-header-background: #272735;
 	--satus-header-text: #7d7da1;
+	--satus-aside-background: #272735;
+	--satus-aside-text: #7d7da1;
+	--satus-section-card-background: #1c1c26;
+	--satus-section-card-text: #7d7da1;
+	--satus-modal-background: #272735;
+	--satus-modal-text: #7d7da1;
 }
+
+
+
+
+
+/*--------------------------------------------------------------
+# BASE
+--------------------------------------------------------------*/
+
+.satus-base {
+	width: 500px;
+	transition: height 160ms ease;
+	will-change: height;
+}
+
+.satus-base:not(.satus-base--expanded) {
+	height: 52px;
+}
+
+.satus-base--expanded {
+	height: 500px;
+}
+
+
+
 
 
 /*--------------------------------------------------------------
@@ -19,6 +59,8 @@ body {
 .satus-header {
 	padding: 8px;
 	height: 52px;
+	position: absolute;
+    width: 100%;
 }
 
 .satus-text-field {
@@ -90,6 +132,91 @@ body {
 --------------------------------------------------------------*/
 
 /*--------------------------------------------------------------
+# MENU
+--------------------------------------------------------------*/
+
+.satus-header .satus-button--burger {
+	margin: 0 8px 0 0;
+}
+
+.satus-button--burger>span {
+	position: absolute;
+	left: 7px;
+	width: 18px;
+	height: 2px;
+	transition: 120ms ease;
+	background: #7d7da1;
+}
+
+.satus-button--burger>span:nth-child(1) {
+	top: 9px;
+}
+
+.satus-button--burger>span:nth-child(2) {
+	top: 15px;
+}
+
+.satus-button--burger>span:nth-child(3) {
+	top: 21px;
+}
+
+.satus-button--burger:focus>span:nth-child(1),
+.satus-button--burger:hover>span:nth-child(1) {
+	transform: translateY(-2px);
+}
+
+.satus-button--burger:focus>span:nth-child(2),
+.satus-button--burger:hover>span:nth-child(2) {
+	transform: scaleX(.66666666667);
+}
+
+.satus-button--burger:focus>span:nth-child(3),
+.satus-button--burger:hover>span:nth-child(3) {
+	transform: translateY(2px);
+}
+
+.satus-button--burger:focus:hover>span:nth-child(1) {
+	transform: translateY(1px);
+}
+
+.satus-button--burger:focus:hover>span:nth-child(2) {
+	transform: scaleX(.55555555556);
+}
+
+.satus-button--burger:focus:hover>span:nth-child(3) {
+	transform: translateY(-1px);
+}
+
+.satus-base--expanded .satus-button--burger>span {
+	transition: 160ms ease;
+}
+
+.satus-base--expanded .satus-button--burger>span:nth-child(1) {
+	transform: translateY(6px);
+}
+
+.satus-base--expanded .satus-button--burger>span:nth-child(2) {
+	transform: scaleX(1);
+}
+
+.satus-base--expanded .satus-button--burger>span:nth-child(3) {
+	transform: translateY(-6px);
+}
+
+.satus-base--expanded .satus-button--burger:hover>span:nth-child(1) {
+	transform: translateY(2px) scaleX(.66666666667);
+}
+
+.satus-base--expanded .satus-button--burger:hover>span:nth-child(2) {
+	transform: scaleX(1);
+}
+
+.satus-base--expanded .satus-button--burger:hover>span:nth-child(3) {
+	transform: translateY(-2px) scaleX(.66666666667);
+}
+
+
+/*--------------------------------------------------------------
 # PREVIOUS
 --------------------------------------------------------------*/
 
@@ -132,4 +259,145 @@ body {
 
 .satus-button--next>span:nth-child(2) {
 	transform: rotate(-45deg) translateX(4px);
+}
+
+
+/*--------------------------------------------------------------
+# CLOSE
+--------------------------------------------------------------*/
+
+.satus-button--close::before,
+.satus-button--close::after {
+	position: absolute;
+	top: 15px;
+	left: 7px;
+	width: 18px;
+	height: 2px;
+	content: '';
+	transition: 120ms ease;
+	transform-origin: center;
+	background: #7d7da1;
+}
+
+.satus-button--close::before {
+	transform: rotate(45deg);
+}
+
+.satus-button--close::after {
+	transform: rotate(-45deg);
+}
+
+
+
+
+
+/*--------------------------------------------------------------
+# MAIN
+--------------------------------------------------------------*/
+
+.satus-main {
+	position: absolute;
+	left: 0;
+	top: 52px;
+	width: calc(100% - 48px);
+	height: calc(100% - 52px);
+	padding: 0 16px;
+}
+
+.satus-main .satus-h1 {
+	font-size: 18px;
+	font-weight: 500;
+	margin: 16px 0 16px;
+	color: #77779c;
+}
+
+.satus-main .satus-section {
+	max-width: none;
+    width: 100%;
+}
+
+.satus-main .satus-text-field {
+    opacity: 1;
+    min-height: 36px;
+}
+
+.satus-main .satus-button--add {
+    width: 100%;
+    height: 40px;
+    padding: 0;
+    background: #22222f;
+    font-size: 20px;
+    margin: 16px 0;
+    border-radius: 8px;
+}
+
+.satus-main .satus-button--remove {
+	padding: 0;
+    width: 36px;
+    height: 36px;
+    margin: 0 0 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+
+
+/*--------------------------------------------------------------
+# ASIDE
+--------------------------------------------------------------*/
+
+.satus-aside {
+	display: flex;
+	flex-direction: column;
+	padding: 0 8px;
+	position: absolute;
+	right: 0;
+	width: 48px;
+	height: calc(100% - 52px);
+	top: 52px;
+	    align-items: center;
+}
+
+
+/*--------------------------------------------------------------
+# BUTTONS
+--------------------------------------------------------------*/
+
+.satus-aside .satus-button {
+	font-family: inherit;
+	font-size: 16px;
+	font-weight: 700;
+	position: relative;
+	overflow: hidden;
+	width: 32px;
+	height: 32px;
+	margin: 0 0 8px 0;
+	padding: 0;
+	transition: background-color 150ms, color 150ms ease;
+	color: inherit;
+	border: none;
+	border-radius: 50%;
+	outline: none;
+	background-color: transparent;
+	appearance: none;
+}
+
+.satus-aside .satus-button:not([disabled]):hover,
+.satus-aside .satus-button:not([disabled]):focus {
+	background-color: rgba(255, 255, 255, .08);
+}
+
+.satus-aside .satus-button--selected {
+	color: #7a7aff;
+}
+
+.satus-aside .satus-button--highlight {
+	padding: 4px;
+}
+
+.satus-aside .satus-button--replace {
+	padding: 4px;
 }

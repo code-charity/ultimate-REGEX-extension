@@ -25,7 +25,7 @@ chrome.runtime.onConnect.addListener(function(port) {
     if (port.name === 'popup') {
         port.onDisconnect.addListener(function() {
            chrome.tabs.query({}, function (tabs) {
-                for (var i = 0, l =	tabs.length; i < l; i++) {
+                for (var i = 0, l = tabs.length; i < l; i++) {
                     chrome.tabs.sendMessage(tabs[i].id, {
                         type: 'reset'
                     });

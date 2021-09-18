@@ -3,16 +3,16 @@
 ----------------------------------------------------------------
 # Global variables
 # Nodes
-	# Is visible
-	# Filter
-		# Regular expression
-		# String
-			# Case sensitive
-			# Case insensitive
-	# Search
-	# Modify
-	# Restore
-	# Focus
+    # Is visible
+    # Filter
+        # Regular expression
+        # String
+            # Case sensitive
+            # Case insensitive
+    # Search
+    # Modify
+    # Restore
+    # Focus
 # Message listener
 --------------------------------------------------------------*/
 
@@ -20,9 +20,12 @@
 # GLOBAL VARIABLES
 --------------------------------------------------------------*/
 
-var items = [],
-	index = 0,
-	query;
+var search_nodes = [],
+    highlight_nodes = {},
+    replace_nodes = {},
+    index = 0,
+    query,
+    current_nodes_container;
 
 
 /*--------------------------------------------------------------
@@ -34,17 +37,17 @@ var items = [],
 --------------------------------------------------------------*/
 
 function isNodeVisible(node) {
-	var style = getComputedStyle(node.parentNode);
+    var style = getComputedStyle(node.parentNode);
 
-	if (style.visibility === 'hidden') {
-		return false;
-	} else if (style.display === 'none') {
-		return false;
-	} else if (node.parentNode.offsetWidth === 0 || node.parentNode.offsetHeight === 0) {
-		return false;
-	} else {
-		return true;
-	}
+    if (style.visibility === 'hidden') {
+        return false;
+    } else if (style.display === 'none') {
+        return false;
+    } else if (node.parentNode.offsetWidth === 0 || node.parentNode.offsetHeight === 0) {
+        return false;
+    } else {
+        return true;
+    }
 }
 
 
@@ -57,19 +60,19 @@ function isNodeVisible(node) {
 --------------------------------------------------------------*/
 
 function filterNodeRegExp(node) {
-	var match = node.nodeValue.match(query);
+    var match = node.nodeValue.match(query);
 
-	if (match && isNodeVisible(node)) {
-		items.push({
-			nodes: {
-				original: node,
-				modified: []
-			},
-			match
-		});
+    if (match && isNodeVisible(node)) {
+        current_nodes_container.push({
+            nodes: {
+                original: node,
+                modified: []
+            },
+            match
+        });
 
-		return NodeFilter.FILTER_ACCEPT;
-	}
+        return NodeFilter.FILTER_ACCEPT;
+    }
 }
 
 
@@ -82,24 +85,24 @@ function filterNodeRegExp(node) {
 --------------------------------------------------------------*/
 
 function filterNodeCaseSensitive(node) {
-	var match = node.nodeValue.indexOf(query);
+    var match = node.nodeValue.indexOf(query);
 
-	if (match !== -1 && isNodeVisible(node)) {
-		items.push({
-			nodes: {
-				original: node,
-				modified: []
-			},
-			match: {
-				index: match,
-				0: {
-					length: query.length
-				}
-			}
-		});
+    if (match !== -1 && isNodeVisible(node)) {
+        current_nodes_container.push({
+            nodes: {
+                original: node,
+                modified: []
+            },
+            match: {
+                index: match,
+                0: {
+                    length: query.length
+                }
+            }
+        });
 
-		return NodeFilter.FILTER_ACCEPT;
-	}
+        return NodeFilter.FILTER_ACCEPT;
+    }
 }
 
 
@@ -108,24 +111,24 @@ function filterNodeCaseSensitive(node) {
 --------------------------------------------------------------*/
 
 function filterNodeCaseInsensitive(node) {
-	var match = node.nodeValue.toLowerCase().indexOf(query);
+    var match = node.nodeValue.toLowerCase().indexOf(query);
 
-	if (match !== -1 && isNodeVisible(node)) {
-		items.push({
-			nodes: {
-				original: node,
-				modified: []
-			},
-			match: {
-				index: match,
-				0: {
-					length: query.length
-				}
-			}
-		});
+    if (match !== -1 && isNodeVisible(node)) {
+        current_nodes_container.push({
+            nodes: {
+                original: node,
+                modified: []
+            },
+            match: {
+                index: match,
+                0: {
+                    length: query.length
+                }
+            }
+        });
 
-		return NodeFilter.FILTER_ACCEPT;
-	}
+        return NodeFilter.FILTER_ACCEPT;
+    }
 }
 
 
@@ -133,14 +136,14 @@ function filterNodeCaseInsensitive(node) {
 # SEARCH
 --------------------------------------------------------------*/
 
-function searchNodes(options) {
-	var tree_walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
-		acceptNode: options.regexp === true ? filterNodeRegExp : options.case_sensitive === true ? filterNodeCaseSensitive : filterNodeCaseInsensitive
-	}, false);
+function searchNodes(container, options) {
+    current_nodes_container = container;
 
-	while (tree_walker.nextNode());
+    var tree_walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+        acceptNode: options.regexp === true ? filterNodeRegExp : options.case_sensitive === true ? filterNodeCaseSensitive : filterNodeCaseInsensitive
+    }, false);
 
-	return items;
+    while (tree_walker.nextNode());
 }
 
 
@@ -148,31 +151,39 @@ function searchNodes(options) {
 # MODIFY
 --------------------------------------------------------------*/
 
-function modifyNodes(items) {
-	for (var i = 0, l = items.length; i < l; i++) {
-		var item = items[i],
-			nodes = item.nodes,
-			parent = nodes.original.parentNode,
-			wrapper = document.createElement('span');
+function modifyNodes(items, options = {}) {
+    for (var i = 0, l = items.length; i < l; i++) {
+        var item = items[i],
+            nodes = item.nodes,
+            parent = nodes.original.parentNode,
+            wrapper = document.createElement('span');
 
-		wrapper.style.color = '#000';
-		wrapper.style.backgroundColor = '#ff0';
+        if (options.hasOwnProperty('search')) {
+            wrapper.textContent = nodes.original.textContent.replace(options.search, options.replace);
 
-		nodes.modified.push(nodes.original.cloneNode(true));
+            nodes.modified.push(wrapper);
 
-		parent.insertBefore(nodes.modified[0], nodes.original);
+            parent.insertBefore(wrapper, nodes.original);
+        } else {
+            wrapper.style.color = options.text_color || '#000';
+            wrapper.style.backgroundColor = options.background_color || '#ff0';
 
-		nodes.modified.push(nodes.modified[0].splitText(item.match.index));
-		nodes.modified.push(nodes.modified[1].splitText(item.match[0].length));
+            nodes.modified.push(nodes.original.cloneNode(true));
 
-		wrapper.appendChild(nodes.modified[1]);
+            parent.insertBefore(nodes.modified[0], nodes.original);
 
-		parent.insertBefore(wrapper, nodes.modified[2]);
+            nodes.modified.push(nodes.modified[0].splitText(item.match.index));
+            nodes.modified.push(nodes.modified[1].splitText(item.match[0].length));
 
-		nodes.original.remove();
+            wrapper.appendChild(nodes.modified[1]);
 
-		nodes.wrapper = wrapper;
-	}
+            parent.insertBefore(wrapper, nodes.modified[2]);
+        }
+
+        nodes.original.remove();
+
+        nodes.wrapper = wrapper;
+    }
 }
 
 
@@ -180,19 +191,19 @@ function modifyNodes(items) {
 # RESTORE
 --------------------------------------------------------------*/
 
-function restoreNodes(items) {
-	for (var i = 0, l = items.length; i < l; i++) {
-		var item = items[i],
-			nodes = item.nodes;
+function restoreNodes(items, options) {
+    for (var i = 0, l = items.length; i < l; i++) {
+        var item = items[i],
+            nodes = item.nodes;
 
-		nodes.modified[0].parentNode.insertBefore(nodes.original, nodes.modified[0]);
+        nodes.modified[0].parentNode.insertBefore(nodes.original, nodes.modified[0]);
 
-		nodes.modified[0].remove();
-		nodes.modified[1].remove();
-		nodes.modified[2].remove();
+        nodes.modified[0].remove();
+        nodes.modified[1].remove();
+        nodes.modified[2].remove();
 
-		nodes.wrapper.remove();
-	}
+        nodes.wrapper.remove();
+    }
 }
 
 
@@ -201,19 +212,19 @@ function restoreNodes(items) {
 --------------------------------------------------------------*/
 
 function focusNode(current, previous) {
-	if (previous) {
-		previous.nodes.wrapper.style.backgroundColor = '#ff0';
-	}
+    if (previous) {
+        previous.nodes.wrapper.style.backgroundColor = '#ff0';
+    }
 
-	if (current) {
-		current.nodes.wrapper.style.backgroundColor = '#f90';
+    if (current) {
+        current.nodes.wrapper.style.backgroundColor = '#f90';
 
-		current.nodes.wrapper.scrollIntoView(true);
+        current.nodes.wrapper.scrollIntoView(true);
 
-		if (current.nodes.wrapper.getBoundingClientRect().top < window.innerHeight / 2) {
-			window.scrollBy(0, -128);
-		}
-	}
+        if (current.nodes.wrapper.getBoundingClientRect().top < window.innerHeight / 2) {
+            window.scrollBy(0, -128);
+        }
+    }
 }
 
 
@@ -221,76 +232,144 @@ function focusNode(current, previous) {
 # MESSAGE LISTENER
 --------------------------------------------------------------*/
 
+document.addEventListener('DOMContentLoaded', function () {
+    chrome.storage.local.get(function (items) {
+        if (items.highlight) {
+            for (var key in items.highlight) {
+                var item = items.highlight[key];
+                
+                if (item.text && item.text.length > 0) {
+                    var old_query = query;
+
+                    try {
+                        query = new RegExp(item.text);
+                    } catch (err) {
+                        query = item.text;
+                    }
+
+                    if (typeof highlight_nodes[key] !== 'object') {
+                        highlight_nodes[key] = [];
+                    }
+
+                    searchNodes(highlight_nodes[key], {
+                        regexp: typeof query !== 'string'
+                    });
+
+                    modifyNodes(highlight_nodes[key], {
+                        text_color: item.text_color ? 'rgb(' + item.text_color.rgb.join(',') + ')' : undefined,
+                        background_color: item.background_color ? 'rgb(' + item.background_color.rgb.join(',') + ')' : undefined
+                    });
+
+                    query = old_query;
+                }
+            }
+        }
+
+        if (items.replace) {
+            for (var key in items.replace) {
+                var item = items.replace[key];
+                
+                if (item.search && item.search.length > 0) {
+                    var old_query = query;
+
+                    try {
+                        query = new RegExp(item.search);
+                    } catch (err) {
+                        query = item.search;
+                    }
+
+                    if (typeof replace_nodes[key] !== 'object') {
+                        replace_nodes[key] = [];
+                    }
+
+                    searchNodes(replace_nodes[key], {
+                        regexp: typeof query !== 'string'
+                    });
+
+                    console.log(replace_nodes);
+
+                    modifyNodes(replace_nodes[key], {
+                        search: query,
+                        replace: item.replace
+                    });
+
+                    query = old_query;
+                }
+            }
+        }
+    });
+});
+
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-	if (message.type === 'input') {
-		restoreNodes(items);
+    if (message.type === 'input') {
+        restoreNodes(search_nodes);
 
-		index = -1;
+        index = -1;
 
-		items = [];
+        search_nodes = [];
 
-		if (message.regexp === true) {
-			query = new RegExp(message.value, message.case_sensitive === false ? 'i' : '');
-		} else {
-			if (message.case_sensitive === false) {
-				query = message.value.toLowerCase();
-			} else {
-				query = message.value;
-			}
-		}
+        if (message.regexp === true) {
+            query = new RegExp(message.value, message.case_sensitive === false ? 'i' : '');
+        } else {
+            if (message.case_sensitive === false) {
+                query = message.value.toLowerCase();
+            } else {
+                query = message.value;
+            }
+        }
 
-		items = searchNodes(message);
+        searchNodes(search_nodes, message);
 
-		sendResponse({
-			index: index + 1,
-			length: items.length
-		});
+        sendResponse({
+            index: index + 1,
+            length: search_nodes.length
+        });
 
-		modifyNodes(items);
-	} else if (message.type === 'previous') {
-		var previous = items[index];
+        modifyNodes(search_nodes);
+    } else if (message.type === 'previous') {
+        var previous = search_nodes[index];
 
-		index--;
+        index--;
 
-		if (index < 0) {
-			index = items.length - 1;
-		}
+        if (index < 0) {
+            index = search_nodes.length - 1;
+        }
 
-		focusNode(items[index], previous);
+        focusNode(search_nodes[index], previous);
 
-		sendResponse({
-			index: index + 1,
-			length: items.length
-		});
-	} else if (message.type === 'next') {
-		var previous = items[index];
+        sendResponse({
+            index: index + 1,
+            length: search_nodes.length
+        });
+    } else if (message.type === 'next') {
+        var previous = search_nodes[index];
 
-		index++;
+        index++;
 
-		if (index === items.length) {
-			index = 0;
-		}
+        if (index === search_nodes.length) {
+            index = 0;
+        }
 
-		focusNode(items[index], previous);
+        focusNode(search_nodes[index], previous);
 
-		sendResponse({
-			index: index + 1,
-			length: items.length
-		});
-	} else if (message.type === 'reset') {
-		restoreNodes(items);
+        sendResponse({
+            index: index + 1,
+            length: search_nodes.length
+        });
+    } else if (message.type === 'reset') {
+        restoreNodes(search_nodes);
 
-		items = [];
+        search_nodes = [];
 
-		sendResponse({
-			index: 0,
-			length: 0
-		});
-	} else if (message.type === 'init') {
-		sendResponse(getSelection().toString());
-	}
+        sendResponse({
+            index: 0,
+            length: 0
+        });
+    } else if (message.type === 'init') {
+        sendResponse(getSelection().toString());
+    }
 });
 
 chrome.runtime.sendMessage({
-	type: 'background'
+    type: 'background'
 });

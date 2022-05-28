@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://github.com/victor-savinov/regex-search">
-        <img src="https://github.com/victor-savinov/icons/blob/master/regex-search/raised-128.png">
+        <img src="https://github.com/victor-savinov/graphics/blob/master/icons/regex/128.png">
     </a>
 </p>
 

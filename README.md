@@ -4,7 +4,7 @@
     </a>
 </p>
 
-<h3 align="center">Regex Search</h3>
+<h3 align="center">Regex</h3>
 
 <p align="center">
     Text multi-tool for any page with familiar Ctrl+F visuals.
